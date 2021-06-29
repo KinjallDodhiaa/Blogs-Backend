@@ -9,7 +9,10 @@ const config = {
 };
 
 //configuration parameters for the local environment
-const connectionString = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.kgubn.mongodb.net/blogs?retryWrites=true&w=majority`;
+//const connectionString = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.kgubn.mongodb.net/blogs?retryWrites=true&w=majority`;
+
+const connectionString = 
+"mongodb+srv://Kinjal:test1234@cluster0.kgubn.mongodb.net/blogs?retryWrites=true&w=majority";
 const devConfig = {
   db: connectionString,
   jwt_key: "FbW43-2-110%",
