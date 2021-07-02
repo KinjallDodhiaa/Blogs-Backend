@@ -23,7 +23,7 @@ const prodConfig = {
   //Using PROD_recordShop as a productive database on the same mongodb cluster
   db:
   //using a difeerent jwt key for the productive environment
-  connectionString,
+"mongodb+srv://Kinjal:test1234@cluster0.kgubn.mongodb.net/PROD_blogs?retryWrites=true&w=majority",
   jwt_key: "PROD_FbW43-2-110%",
 };
 

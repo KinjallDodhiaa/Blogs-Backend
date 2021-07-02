@@ -3,7 +3,7 @@ const FileSync = require("lowdb/adapters/FileSync");
 const adapter = new FileSync("data/db.json");
 const db = low(adapter);
 const isEmpty = require("lodash.isempty");
-const Post = require('../models/Post')
+const Post = require("../models/Post");
 
 /**
  * controller for the blogs
@@ -33,7 +33,6 @@ exports.getPosts = async (req, res, next) => {
   }
 };
 
-
 // exports.addPosts = (req, res, next) => {
 //   //body from the request
 //   try {
@@ -57,15 +56,21 @@ exports.getPosts = async (req, res, next) => {
 // };
 
 exports.addPosts = async (req, res, next) => {
-
   try {
-    const post = new Post(req.body);
+    var data = {
+      title: req.body.title,
+      content: req.body.content,
+      userId: req.user._id,
+    };
+    console.log(data);
+    console.log(req.user);
+    const post = new Post(data);
     await post.save();
-    res.status(200).send(post)
+    res.status(200).send(post);
   } catch (error) {
     next(error);
   }
-}
+};
 
 // To Update a post.
 //     db.get('posts')
@@ -81,7 +86,7 @@ exports.addPosts = async (req, res, next) => {
 //     db.get("posts")
 //       .find({ id: postId })
 //       .assign({
-//         title: req.body.title,  
+//         title: req.body.title,
 //         content: req.body.content,
 //         name: req.body.name,
 //       })
@@ -93,16 +98,25 @@ exports.addPosts = async (req, res, next) => {
 //   }
 // };
 
-exports.updatePosts = async (req,res,next)=>{
-const { id } = req.params;
-
-try {
-  const post = await Post.findByIdAndUpdate(id,req.body,{new:true});
-  res.status(200).send(post);
-} catch (error) {
+exports.updatePosts = async (req, res, next) => {
+  const { id } = req.params;
   
-}
-}
+
+  try {
+    const findPostById = await Post.findById(id);
+    console.log(findPostById);
+    console.log(req.user);
+    if (req.user._id.toString() == findPostById.userId.toString()) {
+    const post = await Post.findByIdAndUpdate(id, req.body, { new: true });
+    res.status(200).send(post);
+    }else{
+      res.json("notauth");
+
+    }
+  } catch (error) {
+    next(error)
+  }
+};
 
 // exports.deletePost = (req, res) => {
 //   try {
@@ -119,8 +133,17 @@ try {
 exports.deletePost = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const post = await Post.deleteOne({ _id: id });
-    res.status(200).send(post);
+    const findPostById = await Post.findById(id);
+    console.log(findPostById);
+    console.log(req.user);
+    if (req.user._id.toString() == findPostById.userId.toString()) {
+      const post = await Post.deleteOne({ _id: id });
+      res.status(200).send(post);
+    } else {
+      res.json("notauth");
+    }
+    // const post = await Post.deleteOne({ _id: id });
+    // res.status(200).send(post);
   } catch (error) {
     next(error);
   }
