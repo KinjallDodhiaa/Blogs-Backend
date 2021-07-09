@@ -5,8 +5,6 @@ const bcrypt = require("bcrypt");
 //import config file
 const config = require("../config/configs");
 
-
-
 const UserSchema = new Schema(
   {
     firstName: {
@@ -22,7 +20,6 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-  
   },
   {
     toObject: {
@@ -82,40 +79,35 @@ UserSchema.methods.checkPassword = function (password) {
 
 //Find a user by the token
 UserSchema.statics.findByToken = function (token) {
-    const User = this;
-    //decoded payload out of the token
-    let decoded;
+  const User = this;
+  //decoded payload out of the token
+  let decoded;
 
-    //verify the token and decode the payload
-    try {
-      decoded = jwt.verify(token, config.jwt_key);
-      console.log(decoded)
-    } catch (error) {
-      console.log(error);
-      return;
-    }
+  //verify the token and decode the payload
+  try {
+    decoded = jwt.verify(token, config.jwt_key);
+    console.log(decoded);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 
-    //find the user with decoded id(decoded._id)
-    return User.findOne({
-      _id: decoded._id
-    })
-
-}
-
+  //find the user with decoded id(decoded._id)
+  return User.findOne({
+    _id: decoded._id,
+  });
+};
 
 //hook to be executed between middlewares
-UserSchema.pre("save", async function(next){
+UserSchema.pre("save", async function (next) {
   // check if the password has changed (added)
   //if password didnt change -> leave the hook
   //if(!this.isModified(password)) return next();
-    if (this.isModified("password")) {
-      this.password = await bcrypt.hash(this.password,10)
-    } else {
-      return next();
-    }
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  } else {
+    return next();
+  }
+});
 
-})
-
-
-
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("user", UserSchema);

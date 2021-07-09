@@ -24,7 +24,7 @@ const Post = require("../models/Post");
 exports.getPosts = async (req, res, next) => {
   //get all records
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().populate("userId", "firstName");
     res.status(200).send(posts);
   } catch (error) {
     console.log(error);
@@ -100,21 +100,19 @@ exports.addPosts = async (req, res, next) => {
 
 exports.updatePosts = async (req, res, next) => {
   const { id } = req.params;
-  
 
   try {
     const findPostById = await Post.findById(id);
     console.log(findPostById);
     console.log(req.user);
     if (req.user._id.toString() == findPostById.userId.toString()) {
-    const post = await Post.findByIdAndUpdate(id, req.body, { new: true });
-    res.status(200).send(post);
-    }else{
+      const post = await Post.findByIdAndUpdate(id, req.body, { new: true });
+      res.status(200).send(post);
+    } else {
       res.json("notauth");
-
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
